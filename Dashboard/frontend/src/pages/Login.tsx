@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import FormInput from '../components/FormInput';
 import { useNavigate } from 'react-router-dom';
+import Register from './Register';
 import axios from 'axios';
 
 export default function Login() {
@@ -52,6 +53,10 @@ export default function Login() {
     }
   };
 
+  const RegisterLink = () => {
+    navigate("/register");
+  }
+
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -62,6 +67,7 @@ export default function Login() {
         <button onClick={handleLogin} className="w-full bg-blue-500 text-white py-2 rounded-lg mt-4 hover:bg-blue-600">
           ورود
         </button>
+        <p className='text-[12px] text-center mt-7 text-blue-600 hover:underline cursor-pointer' onClick={RegisterLink}>حساب ندارید؟ کلیک کنید</p>
       </div>
     </div>
   );
