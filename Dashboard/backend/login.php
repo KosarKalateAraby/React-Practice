@@ -1,10 +1,16 @@
 <?php 
 
+require __DIR__ . '/vendor/autoload.php'; // اتصال به autoload کامپوزر
+
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
+
 include('config.php');
 
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Headers: Content-Type");
-header("Access-Control-Allow-Methods: POST, GET");
+header("Access-Control-Allow-Origin: http://localhost:5173");
+header("Access-Control-Allow-Credentials: true");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Access-Control-Allow-Methods: POST, GET , OPTIONS");
 header("Content-Type: application/json");
 
 $data = json_decode(file_get_contents("php://input"), true);
@@ -19,12 +25,6 @@ if (empty($email) || empty($password)){
     ]);
     exit;
 }
-
-//فرضا کاربر هستن. بعدا وارد دیتابیس میشه
-// $users = [
-//     'admin@gmail.com' => ['password' => '12345678', 'role' => 'admin'],
-//     'user@gmail.com' => ['password' => '87654321', 'role' => 'user'],
-// ];
 
 // اماده کردن query و گرفتن id کاربر از هرجا که email مساوی با جایی بود که بعدا پرش میکنیم
 $stmt = $conn->prepare("SELECT id , password , role FROM users WHERE email = ?");
@@ -46,21 +46,53 @@ if ($result -> num_rows === 1){ //num_rows تعداد ردیف هایی که que
         //password_verify یک بررسی رمز عبور امن هستش که پارامتر اول رمز خام کاربر هستش
         // و پارامتر دوم رمز هش شده
 
-        $_SESSION['user'] = [
-            'email' => $email,
-            'role' => $user['role'],
+        // $_SESSION['user'] = [
+        //     'email' => $email,
+        //     'role' => $user['role'],
+        // ];
+        // file_put_contents("session_debug.txt", json_encode($_SESSION), FILE_APPEND);
+
+        // ✅ اگر رمز صحیح بود، حالا JWT تولید کنیم
+        $secret_key = 'T9vL6wPzYx4N1qKsRf8JuE2MhB0cZaXdTg3Br7VoWmUe5CyHkQiLnApZsEjGtX9b';
+
+        // echo json_encode([
+        // 'status' => 'success', 
+        // 'message' => 'ثبت‌نام با موفقیت انجام شد',
+        // 'role' => $user['role']]);
+
+        $payload = [
+            "id" => $user['id'],
+            "email" => $email,
+            "role" => $user['role'],
+            // "exp" => time() + 3600 // ⏰ انقضا: 1 ساعت
         ];
+
+        // ساخت توکن
+        $jwt = JWT::encode($payload, $secret_key, 'HS256');
+        file_put_contents("debug_token.txt", $jwt); // ذخیره توکن در فایل
+
+        // ارسال توکن به فرانت
         echo json_encode([
-        'status' => 'success', 
-        'message' => 'ثبت‌نام با موفقیت انجام شد',
-        'role' => $user['role']]);
+            'status' => 'success',
+            'message' => 'Login successful',
+            'role' => $user['role'],
+            'token' => $jwt
+        ]);
+        exit;
     } 
     else {
     echo json_encode([
         'status' => 'error', 
-        'message' => 'خطا در ورود']);
+        'message' => 'رمز عبور اشتباه است']);
 }
 }
+else {
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'کاربری با این ایمیل پیدا نشد'
+    ]);
+}
+
 
 //ازاد کردن منابع و بالا بردن سرعت سایت و جلوگیری از کرش کردن
 $stmt->close();
