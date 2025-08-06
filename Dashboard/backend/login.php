@@ -46,19 +46,8 @@ if ($result -> num_rows === 1){ //num_rows تعداد ردیف هایی که que
         //password_verify یک بررسی رمز عبور امن هستش که پارامتر اول رمز خام کاربر هستش
         // و پارامتر دوم رمز هش شده
 
-        // $_SESSION['user'] = [
-        //     'email' => $email,
-        //     'role' => $user['role'],
-        // ];
-        // file_put_contents("session_debug.txt", json_encode($_SESSION), FILE_APPEND);
-
         // ✅ اگر رمز صحیح بود، حالا JWT تولید کنیم
         $secret_key = 'T9vL6wPzYx4N1qKsRf8JuE2MhB0cZaXdTg3Br7VoWmUe5CyHkQiLnApZsEjGtX9b';
-
-        // echo json_encode([
-        // 'status' => 'success', 
-        // 'message' => 'ثبت‌نام با موفقیت انجام شد',
-        // 'role' => $user['role']]);
 
         $payload = [
             "id" => $user['id'],

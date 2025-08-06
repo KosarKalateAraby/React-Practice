@@ -2,14 +2,23 @@
 
 include('config.php');
 
+// لود کردن کتابخانه JWT
+require 'vendor/autoload.php';
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
+
+$secret_key = 'T9vL6wPzYx4N1qKsRf8JuE2MhB0cZaXdTg3Br7VoWmUe5CyHkQiLnApZsEjGtX9b'; 
+
+header("Access-Control-Allow-Origin: http://localhost:5173");
+header("Access-Control-Allow-Credentials: true");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Access-Control-Allow-Methods: POST, GET , OPTIONS");
+header("Content-Type: application/json");
 
 //داده‌هایی که از طریق درخواست HTTP با فرمت JSON ارسال شدن رو می‌خونه، تجزیه (parse) می‌کنه و به صورت یک آرایه‌ی PHP ذخیره می‌کنه در متغیر $data
-
 //json_decode = true --> آرایه انجمنی
 //json_decode = false --> object
-
 //php://input میاد بدنه خام و دیتاهای با فرمت json رو json رو میگیره
-
 //get_the_content() میاد محتوای آدرس رو میگیره و به صورت رشته برمیگردونه
 $data = json_decode(file_get_contents("php://input"), true);
 
@@ -62,18 +71,26 @@ $stmt = $conn -> prepare("INSERT INTO users (name , email , password) VALUES (? 
 $stmt->bind_param("sss", $name, $email, $hashedPassword);
 
 if ($stmt->execute()) {
-    $_SESSION['user'] = [
-        'email' => $email,
-        'role' => 'user'
+    $payload = [
+        "email" => $email,
+        "name" => $name,
+        "role" => "user",
+        "iat" => time(),
+        "exp" => time() + (3600 * 24)
     ];
 
+    $jwt = JWT::encode($payload, $secret_key, 'HS256');
+
     echo json_encode([
-        'status' => 'success', 
-        'message' => 'ثبت‌نام با موفقیت انجام شد']);
+        'status' => 'success',
+        'message' => 'ثبت‌نام با موفقیت انجام شد',
+        'token' => $jwt
+    ]);
 } else {
     echo json_encode([
         'status' => 'error', 
-        'message' => 'خطا در ثبت‌نام']);
+        'message' => 'خطا در ثبت‌نام'
+    ]);
 }
 
 //ازاد کردن منابع و بالا بردن سرعت سایت و جلوگیری از کرش کردن
