@@ -15,7 +15,6 @@ export default function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/admin" element={<AdminPanel />} />
         <Route path="/user" element={<UserPanel />} />
-
         <Route path="/profile" element={<Profile />} />
         {/* نکته: اسم route ها و تابع هایی که export default میشن، حتما باید با حرف بزرگ نمایش داده بشه */}
         {/* وگرنه ری اکت ارور میده */}
