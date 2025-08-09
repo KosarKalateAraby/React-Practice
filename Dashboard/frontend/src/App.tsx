@@ -3,15 +3,16 @@ import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import UserPanel from "./pages/UserPanel";
-import AdminPanel from "./AdminPanel";
 import Profile from "./pages/profile";
+import AdminPanel from "./pages/AdminPanel";
+import UserPanel from "./pages/UserPanel";
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/admin" element={<AdminPanel />} />
         <Route path="/user" element={<UserPanel />} />

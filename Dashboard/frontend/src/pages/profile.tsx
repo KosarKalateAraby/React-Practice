@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import UserPanel from "./UserPanel";
+import UserPanel from "../components/UserMenu";
 
 export default function Profile() {
   const [userData, setUserData] = useState<{
@@ -32,9 +32,9 @@ export default function Profile() {
 
   return (
     <div className="flex items-center justify-center bg-gray-100 min-h-screen">
-      <UserPanel/>
-      <div className="bg-white p-8 rounded-xl shadow-xl w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-6 text-center">پروفایل</h2>
+      <UserPanel />
+      <div className="bg-white p-8 rounded-xl shadow-xl w-80 lg:w-full max-w-md">
+        <h2 className="text-2xl font-bold mb-8 text-center">پروفایل</h2>
 
         {/*  واگر خطا وجود داشت نمایش داده میشه واگرنه مقدارش null میشه */}
         {error && <p className="text-red-500">{error}</p>}
@@ -42,12 +42,10 @@ export default function Profile() {
         {userData ? (
           <div className="space-y-4">
             <div>
-              <p className="font-semibold">نام:</p>
-              <p>{userData.name}</p>
+              <p className="font-medium">نام: {userData.name}</p>
             </div>
             <div>
-              <p className="font-semibold">ایمیل:</p>
-              <p>{userData.email}</p>
+              <p className="font-medium">ایمیل: {userData.email}</p>
             </div>
           </div>
         ) : (
