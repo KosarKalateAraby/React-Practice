@@ -9,6 +9,9 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const navigate = useNavigate();
+  const LoginLink = () => {
+    navigate("/login");
+  };
 
   const handleRegister = async () => {
     if (!name || !email || !password) {
@@ -64,6 +67,12 @@ export default function Register() {
         >
           ثبت‌نام
         </button>
+        <p
+          className="text-[12px] text-center mt-7 text-blue-600 hover:underline cursor-pointer"
+          onClick={LoginLink}
+        >
+          قبلا ثبت نام کردید؟ کلیک کنید
+        </p>
       </div>
     </div>
   );
