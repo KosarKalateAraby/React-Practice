@@ -9,6 +9,7 @@ import {
 } from "react-icons/fa";
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
+import LogoutButton from "./Logout";
 
 export default function UserMenu() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -46,10 +47,7 @@ export default function UserMenu() {
               <FaShoppingCart />
               سبد خرید
             </NavLink>
-            <NavLink to="/" className={getActiveClass}>
-              <FaSignOutAlt />
-              خروج
-            </NavLink>
+            <LogoutButton/>
           </div>
         </div>
       </aside>

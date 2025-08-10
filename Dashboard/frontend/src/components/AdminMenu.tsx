@@ -8,6 +8,8 @@ import {
 } from "react-icons/fa";
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
+import LogoutButton from "./Logout";
+
 
 
 export default function AdminMenu() {
@@ -46,10 +48,7 @@ export default function AdminMenu() {
                 <FaShoppingCart />
                 سفارشات
               </NavLink>
-              <NavLink to="/" className={getActiveClass}>
-                <FaSignOutAlt />
-                خروج
-              </NavLink>
+              <LogoutButton/> 
             </div>
           </div>
         </aside>
