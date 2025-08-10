@@ -1,8 +1,13 @@
 <?php
 
+//require: این دستور فایل مورد نظر رو لود و اجرا می‌کنه. اگه فایل پیدا نشه، اجرای کل برنامه متوقف میشه و خطا میده
+//__DIR__: یک ثابت داخلی که مسیر کامل پوشه‌ی فعلی همین فایل رو برمی‌گردونه
 require __DIR__ . '/vendor/autoload.php';
+
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
+//کلاس JWT رو از کتابحونه مربوطش بیار تا مستقیم بتونم استفادش کنم. 
+// مثل import کردن در react
 
 include('config.php');
 
@@ -27,25 +32,29 @@ header("Content-Type: application/json");
 
 
 // دریافت توکن از هدر Authorization
-$headers = apache_request_headers();
-$authHeader = $headers['Authorization'] ?? '';
 
-if (!$authHeader || !str_starts_with($authHeader, 'Bearer ')) {
-    http_response_code(401);
+$headers = apache_request_headers(); //تابع همه هدرهای HTTP که همراه درخواست به سرور اومدن رو برمی‌گردونه
+$authHeader = $headers['Authorization'] ?? ''; //بررسی وجود Authorization داخل آرایه headers
+
+
+if (!$authHeader || !str_starts_with($authHeader, 'Bearer ')) { //بررسی شروع رشته authHeader با کلمه Bearer
+    http_response_code(401); 
     echo json_encode(['error' => 'توکن ارسال نشده یا نامعتبر است']);
     exit;
 }
 
-$jwt = str_replace('Bearer ', '', $authHeader); // حذف "Bearer " از اول توکن
+$jwt = str_replace('Bearer ', '', $authHeader); // حذف کلمه Bearer از متغیر authHeader
 
 try{
-    $secret_key = 'T9vL6wPzYx4N1qKsRf8JuE2MhB0cZaXdTg3Br7VoWmUe5CyHkQiLnApZsEjGtX9b'; // کلید رمزگشایی
+    $secret_key = 'T9vL6wPzYx4N1qKsRf8JuE2MhB0cZaXdTg3Br7VoWmUe5CyHkQiLnApZsEjGtX9b';
     $decoded = JWT::decode($jwt, new Key($secret_key, 'HS256'));
+    //JWT::decode() یکی از توابع کتابخانه Firebase JWT
+    //با استفاده از متغیر secret_key متغیر jwt رو باز کن و ببین الگوریتمش HS256 هستش یا نه.
 
-    $email = $decoded->email ?? null;
+    $email = $decoded->email ?? null; //از آرایه decode مقدار email رو میگیره و ذخیره میکنه
 
     if (!$email) {
-        throw new Exception('Invalid token: missing email');
+        throw new Exception('Invalid token: missing email'); //خطا نشون میده ایمیل وجود نداره
     }
 
     $stmt = $conn->prepare("SELECT name, email FROM users WHERE email = ?");
@@ -64,7 +73,7 @@ try{
     $stmt->close();
     $conn->close();
 }
-catch (Exception $e){
+catch (Exception $e){ //یعنی هر استثنایی که در بلوک اتفاق افتاد، بدون توجه به نوعش، اینجا بگیرش
     http_response_code(401);
     echo json_encode(['error' => 'توکن نامعتبر است', 'details' => $e->getMessage()]);
 }
